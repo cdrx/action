@@ -8,6 +8,22 @@ inputs:
   token:
     description: github token to clone / push with
     required: false
+  committer_name:
+    description: name of the user that will push fixes back
+    required: false
+    default: 'pre-commit'
+  committer_email:
+    description: email address of the user that will push fixes back
+    required: false
+    default: 'pre-commit@example.com'
+  commit_prefix:
+    description: prefix added to message when fixes are made
+    required: false
+    default: ''
+  commit_message:
+    description: commit message when fixes are made
+    required: false
+    default: 'pre-commit fixes'
 runs:
   using: 'node12'
   main: 'dist/index.js'
