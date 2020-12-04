@@ -53,10 +53,14 @@ async function main() {
     const cacheKey = `pre-commit-2-${hashString(py)}-${hashFile('.pre-commit-config.yaml')}`;
     const restored = await cache.restoreCache(cachePaths, cacheKey);
     const ret = await exec.exec('pre-commit', args, {ignoreReturnCode: push});
-    const commitMessage = core.getInput('commit_message');
+    let commitMessage = core.getInput('commit_message');
     const commitPrefix = core.getInput('commit_prefix');
     const committerEmail = core.getInput('committer_email');
     const committerName = core.getInput('committer_name');
+
+    if (commitPrefix) {
+        commitMessage = commitPrefix + ' ' + commitMessage;
+    }
 
     if (!restored) {
         await cache.saveCache(cachePaths, cacheKey);
@@ -81,7 +85,7 @@ async function main() {
                 const branch = pr.head.ref;
                 await exec.exec('git', ['checkout', 'HEAD', '-b', branch]);
 
-                await exec.exec('git', ['commit', '-am', commitPrefix + commitMessage]);
+                await exec.exec('git', ['commit', '-am', commitMessage]);
                 const url = addToken(pr.head.repo.clone_url, token);
                 await exec.exec('git', ['push', url, 'HEAD']);
             });
